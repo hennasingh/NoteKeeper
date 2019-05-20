@@ -1,18 +1,20 @@
 package com.geek.notekeeper
 
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity;
+import android.text.InputType.TYPE_CLASS_TEXT
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var listRecyclerView : RecyclerView
+    val listDataManager = ListDataManager(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,13 +22,15 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            showCreateListDialog()
         }
 
+        val lists = listDataManager.readList()
         listRecyclerView = findViewById<RecyclerView>(R.id.rv_list)
         listRecyclerView.layoutManager = LinearLayoutManager(this)
-        listRecyclerView.adapter = ListSelectionRecyclerViewAdapter()
+        listRecyclerView.adapter = ListSelectionRecyclerViewAdapter(lists)
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -43,5 +47,28 @@ class MainActivity : AppCompatActivity() {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun showCreateListDialog() {
+        val dialogTitle = getString(R.string.name_of_list)
+        val positiveButtonTitle = getString(R.string.create_list)
+
+        val builder = AlertDialog.Builder(this)
+        val listTitleEditText = EditText(this)
+        listTitleEditText.inputType = TYPE_CLASS_TEXT //only textual keyboard
+        builder.setTitle(dialogTitle)
+        builder.setView(listTitleEditText)
+
+        builder.setPositiveButton(positiveButtonTitle) { dialog, i ->
+
+            val list = TaskList(listTitleEditText.text.toString())
+            listDataManager.saveList(list)
+            val recyclerAdapter = listRecyclerView.adapter as ListSelectionRecyclerViewAdapter
+            recyclerAdapter.addList(list)
+            dialog.dismiss()
+        }
+
+        builder.create().show()
+
     }
 }
