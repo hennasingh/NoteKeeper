@@ -9,8 +9,16 @@
         tools:showIn="@layout/activity_main"
         tools:context=".MainActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <fragment
+            android:id="@+id/list_selection_fragment"
+            android:name="com.geek.notekeeper.ListSelectionFragment"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/rv_list"/>
+            android:layout_height="match_parent">
+
+    </fragment>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
